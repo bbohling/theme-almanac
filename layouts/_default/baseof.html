@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="{{ site.LanguageCode | default "en" }}">
+  {{ partial "almanac/head.html" . }}
+  <body class="almanac kind-{{ .Kind }}">
+    <a class="skip-link" href="#main">Skip to content</a>
+    <div class="wrap">
+      {{ partial "almanac/header.html" . }}
+      <main id="main">
+        {{ block "main" . }}{{ end }}
+      </main>
+      {{ partial "almanac/footer.html" . }}
+    </div>
+    {{ if templates.Exists "partials/custom_footer.html" }}{{ partial "custom_footer.html" . }}{{ end }}
+    {{ range site.Params.plugins_js }}
+      <script src="{{ . }}"></script>
+    {{ end }}
+  </body>
+</html>

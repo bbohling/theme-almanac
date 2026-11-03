@@ -1,0 +1,18 @@
+{{ define "main" }}
+  {{- $posts := where site.RegularPages "Type" "post" -}}
+  {{- $list := $posts.ByDate.Reverse -}}
+  {{- $pag := false -}}
+  {{- if site.Params.paginate_home -}}
+    {{- $pag = .Paginate $list -}}
+    {{- $list = $pag.Pages -}}
+  {{- else -}}
+    {{- $list = first (int (site.Params.almanac_home_count | default 30)) $list -}}
+  {{- end -}}
+
+  {{- if and (ne site.Params.almanac_show_strip false) (or (not $pag) (eq $pag.PageNumber 1)) }}
+    {{ partial "almanac/strip.html" (dict "posts" $posts) }}
+  {{- end }}
+
+  {{ partial "almanac/feed.html" $list }}
+  {{ partial "almanac/pager.html" (dict "pag" $pag) }}
+{{ end }}

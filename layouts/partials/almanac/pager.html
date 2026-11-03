@@ -1,0 +1,10 @@
+{{- /* Context: dict "pag" (paginator or false) */ -}}
+{{- $pag := .pag -}}
+<nav class="pager" aria-label="More snippets">
+  {{- if $pag }}
+    {{- if $pag.HasNext }}<a class="pager-older" href="{{ $pag.Next.URL }}">← Earlier days</a>{{ else }}<span></span>{{ end }}
+    {{- if $pag.HasPrev }}<a class="pager-newer" href="{{ $pag.Prev.URL }}">Later days →</a>{{ end }}
+  {{- else }}
+    <a class="pager-older" href="{{ "archive/" | relURL }}">← Earlier days, in the archive</a>
+  {{- end }}
+</nav>

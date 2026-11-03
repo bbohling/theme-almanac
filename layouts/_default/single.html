@@ -1,0 +1,49 @@
+{{ define "main" }}
+{{- if and (in (slice "post" "reply") .Type) (not .Date.IsZero) }}
+  <article class="h-entry single">
+    <header class="single-head">
+      <a class="u-url single-day" href="{{ .Permalink }}"><time class="dt-published" datetime="{{ .Date.Format "2006-01-02T15:04:05-07:00" }}">{{ .Date.Day }}</time></a>
+      <div class="single-date">
+        <span class="single-mon">{{ .Date.Format "January 2006" }}</span>
+        <span class="single-wk">{{ .Date.Format "Monday · 3:04 PM" }}</span>
+      </div>
+    </header>
+    {{ with .Title }}<h1 class="p-name single-title">{{ . }}</h1>{{ end }}
+    <div class="e-content single-body">
+      {{ .Content }}
+    </div>
+    {{ with .Params.categories }}
+    <p class="single-cats">
+      {{ range . }}<a class="p-category" href="{{ printf "categories/%s/" (. | urlize) | relURL }}">{{ . }}</a>{{ end }}
+    </p>
+    {{ end }}
+    {{ if templates.Exists "partials/microblog_syndication.html" }}{{ partial "microblog_syndication.html" . }}{{ end }}
+  </article>
+
+  {{ if ne site.Params.include_conversation false }}
+    <section class="conversation">
+      <script type="text/javascript" src="https://micro.blog/conversation.js?url={{ .Permalink }}"></script>
+    </section>
+  {{ end }}
+
+  {{- $posts := (where site.RegularPages "Type" "post").ByDate -}}
+  {{- $a := $posts.Next . -}}
+  {{- $b := $posts.Prev . -}}
+  {{- $older := false }}{{ $newer := false -}}
+  {{- with $a }}{{ if .Date.Before $.Date }}{{ $older = . }}{{ else }}{{ $newer = . }}{{ end }}{{ end -}}
+  {{- with $b }}{{ if .Date.Before $.Date }}{{ $older = . }}{{ else }}{{ $newer = . }}{{ end }}{{ end -}}
+  {{- if or $older $newer }}
+  <nav class="pager pager--single" aria-label="Neighboring snippets">
+    {{ with $older }}<a class="pager-older" href="{{ .Permalink }}">← {{ .Date.Format "Jan 2, 2006" }}</a>{{ else }}<span></span>{{ end }}
+    {{ with $newer }}<a class="pager-newer" href="{{ .Permalink }}">{{ .Date.Format "Jan 2, 2006" }} →</a>{{ end }}
+  </nav>
+  {{- end }}
+{{- else }}
+  <article class="page">
+    <header class="list-head"><h1 class="page-title">{{ .Title }}</h1></header>
+    <div class="page-body">
+      {{ .Content }}
+    </div>
+  </article>
+{{- end }}
+{{ end }}

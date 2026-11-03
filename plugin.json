@@ -1,0 +1,36 @@
+{
+  "version": "1.0",
+  "title": "Almanac theme",
+  "description": "A Swiss-style, photo-first theme where every snippet is led by its date. Includes a month-by-month post strip and a calendar archive.",
+  "fields": [
+    {
+      "field": "params.almanac_tagline",
+      "label": "Tagline under your name"
+    },
+    {
+      "field": "params.almanac_accent",
+      "label": "Accent color",
+      "type": "color"
+    },
+    {
+      "field": "params.almanac_show_strip",
+      "label": "Show the month strip on the home page",
+      "type": "boolean"
+    },
+    {
+      "field": "params.almanac_strip_months",
+      "label": "Months shown in the strip",
+      "type": "integer"
+    },
+    {
+      "field": "params.almanac_home_count",
+      "label": "Posts on the home page (when home pagination is off)",
+      "type": "integer"
+    },
+    {
+      "field": "params.almanac_show_time",
+      "label": "Show the time of day under each date",
+      "type": "boolean"
+    }
+  ]
+}

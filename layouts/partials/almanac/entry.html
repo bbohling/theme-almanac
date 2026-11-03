@@ -1,0 +1,33 @@
+{{- /* One snippet in a list. Context: the post page. */ -}}
+{{- $imgs := findRE `<img[^>]+>` .Content -}}
+{{- $hasPhoto := gt (len $imgs) 0 -}}
+{{- $text := .Content -}}
+{{- if $hasPhoto -}}
+  {{- $text = $text | replaceRE `<img[^>]+>` "" | replaceRE `<a[^>]*>\s*</a>` "" | replaceRE `<figure[^>]*>\s*</figure>` "" | replaceRE `<p>(\s|&nbsp;|<br\s*/?>)*</p>` "" -}}
+  {{- $text = trim $text " \n\t" -}}
+{{- end -}}
+{{- $iso := .Date.Format "2006-01-02T15:04:05-07:00" -}}
+<article class="h-entry entry {{ if $hasPhoto }}entry--photo{{ else }}entry--text{{ end }}">
+  <div class="entry-meta">
+    <a class="u-url entry-day" href="{{ .Permalink }}"><time class="dt-published" datetime="{{ $iso }}">{{ .Date.Day }}</time></a>
+    <span class="entry-mon">{{ .Date.Format "Jan" }} <span class="entry-wk">{{ .Date.Format "Mon" }}</span>{{ if site.Params.almanac_show_time }} <span class="entry-time">{{ .Date.Format "3:04 PM" }}</span>{{ end }}</span>
+    {{- if $hasPhoto }}
+      {{ with .Title }}<h3 class="p-name entry-title"><a href="{{ $.Permalink }}">{{ . }}</a></h3>{{ end }}
+      {{ with $text }}<div class="e-content entry-caption">{{ . | safeHTML }}</div>{{ end }}
+    {{- end }}
+  </div>
+  <div class="entry-body">
+    {{- if $hasPhoto }}
+      <a class="entry-hero" href="{{ .Permalink }}">{{ index $imgs 0 | replaceRE `^<img ` `<img loading="lazy" ` | safeHTML }}</a>
+      {{- if gt (len $imgs) 1 }}
+      <a class="entry-more" href="{{ .Permalink }}" aria-label="{{ len $imgs }} photos — see them all">
+        {{- range first 4 (after 1 $imgs) }}<span>{{ . | replaceRE `^<img ` `<img loading="lazy" ` | safeHTML }}</span>{{ end -}}
+        {{- if gt (len $imgs) 5 }}<span class="entry-more-count">+{{ sub (len $imgs) 5 }}</span>{{ end -}}
+      </a>
+      {{- end }}
+    {{- else }}
+      {{ with .Title }}<h3 class="p-name entry-title"><a href="{{ $.Permalink }}">{{ . }}</a></h3>{{ end }}
+      <div class="e-content entry-text">{{ .Content }}</div>
+    {{- end }}
+  </div>
+</article>

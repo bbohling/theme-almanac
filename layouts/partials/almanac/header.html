@@ -1,0 +1,15 @@
+<header class="masthead">
+  <a class="masthead-title" href="{{ "/" | relURL }}">
+    <span class="masthead-name">{{ site.Title }}</span>
+    {{ with site.Params.almanac_tagline }}<span class="masthead-tagline">{{ . }}</span>{{ end }}
+  </a>
+  {{ with site.Menus.main }}
+  <nav class="masthead-nav" aria-label="Main">
+    {{ range . }}
+      {{ $url := .URL | relLangURL }}
+      {{ with .Page }}{{ with .Params.redirect_url }}{{ $url = . }}{{ end }}{{ end }}
+      <a href="{{ $url | safeURL }}">{{ .Name }}</a>
+    {{ end }}
+  </nav>
+  {{ end }}
+</header>

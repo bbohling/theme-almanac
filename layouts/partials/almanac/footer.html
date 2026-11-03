@@ -1,0 +1,8 @@
+<footer class="colophon">
+  <span>© {{ now.Year }} {{ site.Params.author.name | default site.Title }}</span>
+  <span class="colophon-links">
+    {{ with site.Params.author.username }}<a href="https://micro.blog/{{ . }}">Also on Micro.blog</a> · {{ end }}
+    <a href="{{ "feed.xml" | absURL }}">RSS</a> ·
+    <a href="{{ "feed.json" | absURL }}">JSON Feed</a>
+  </span>
+</footer>

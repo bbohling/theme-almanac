@@ -1,0 +1,19 @@
+{{ define "main" }}
+  <header class="list-head">
+    <span class="list-kicker">{{ if eq .Kind "term" }}Category{{ else if eq .Kind "taxonomy" }}All{{ else }}Snippets{{ end }}</span>
+    <h1 class="page-title">{{ .Title }}</h1>
+  </header>
+
+  {{- if eq .Kind "taxonomy" }}
+    <ul class="term-list">
+      {{- range .Pages.ByTitle }}
+      <li><a href="{{ .Permalink }}">{{ .Title }}</a> <span>{{ len .Pages }}</span></li>
+      {{- end }}
+    </ul>
+  {{- else }}
+    {{- $pages := (where .RegularPagesRecursive "Type" "in" (slice "post" "reply")).ByDate.Reverse -}}
+    {{- $pag := .Paginate $pages -}}
+    {{ partial "almanac/feed.html" $pag.Pages }}
+    {{ partial "almanac/pager.html" (dict "pag" $pag) }}
+  {{- end }}
+{{ end }}

@@ -1,0 +1,11 @@
+{{- /* A dated run of entries with a big year mark whenever the year changes. Context: a page collection. */ -}}
+<div class="h-feed feed">
+  {{- $lastYear := 0 }}
+  {{- range . }}
+    {{- if ne .Date.Year $lastYear }}
+    <h2 class="year-mark" id="y{{ .Date.Year }}">{{ .Date.Year }}</h2>
+      {{- $lastYear = .Date.Year }}
+    {{- end }}
+    {{ partial "almanac/entry.html" . }}
+  {{- end }}
+</div>

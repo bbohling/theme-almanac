@@ -1,0 +1,43 @@
+{{- /* Month-by-month strip: one column per month, one dot per post. Context: dict "posts" */ -}}
+{{- $posts := .posts -}}
+{{- $n := int (site.Params.almanac_strip_months | default 18) -}}
+{{- if lt $n 3 }}{{ $n = 3 }}{{ end -}}
+{{- if gt $n 36 }}{{ $n = 36 }}{{ end -}}
+{{- $counts := dict -}}
+{{- range $posts.GroupByDate "2006-01" -}}
+  {{- $counts = merge $counts (dict .Key (len .Pages)) -}}
+{{- end -}}
+{{- $end := time.AsTime (printf "%d-%02d-01T12:00:00Z" now.Year (int now.Month)) -}}
+{{- $start := $end.AddDate 0 (sub 1 $n) 0 -}}
+{{- $total := 0 -}}
+{{- range $i := seq 0 (sub $n 1) -}}
+  {{- $total = add $total (index $counts (($start.AddDate 0 $i 0).Format "2006-01") | default 0) -}}
+{{- end -}}
+<section class="strip" aria-label="Snippets per month">
+  <div class="strip-head">
+    <span>{{ $start.Format "Jan 2006" }}</span>
+    <span class="strip-total"><i aria-hidden="true"></i>{{ $total }} {{ cond (eq $total 1) "snippet" "snippets" }}</span>
+    <span>{{ $end.Format "Jan 2006" }}</span>
+  </div>
+  <ol class="strip-months" style="grid-template-columns: repeat({{ $n }}, minmax(0, 1fr))">
+    {{- range $i := seq 0 (sub $n 1) }}
+      {{- $m := $start.AddDate 0 $i 0 }}
+      {{- $key := $m.Format "2006-01" }}
+      {{- $c := index $counts $key | default 0 }}
+      {{- $label := printf "%s: %d %s" ($m.Format "January 2006") $c (cond (eq $c 1) "snippet" "snippets") }}
+      <li class="strip-month{{ if gt $c 0 }} has-posts{{ end }}{{ if eq (int $m.Month) 1 }} is-jan{{ end }}">
+        {{- if gt $c 0 }}
+        <a href="{{ "archive/" | relURL }}#m-{{ $key }}" aria-label="{{ $label }}" title="{{ $label }}">
+        {{- else }}
+        <span title="{{ $label }}">
+        {{- end }}
+          <span class="strip-bar" aria-hidden="true">
+            {{- if gt $c 5 }}<b>{{ $c }}</b>{{ else }}{{ range seq $c }}<i></i>{{ end }}{{ end -}}
+          </span>
+          <span class="strip-label" aria-hidden="true">{{ substr ($m.Format "Jan") 0 1 }}</span>
+          {{- if eq (int $m.Month) 1 }}<span class="strip-year" aria-hidden="true">’{{ $m.Format "06" }}</span>{{ end }}
+        {{- if gt $c 0 }}</a>{{ else }}</span>{{ end }}
+      </li>
+    {{- end }}
+  </ol>
+</section>
