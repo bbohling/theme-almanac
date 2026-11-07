@@ -1,15 +1,20 @@
+{{- $here := .RelPermalink -}}
 <header class="masthead">
   <a class="masthead-title" href="{{ "/" | relURL }}">
-    <span class="masthead-name">{{ site.Title }}</span>
-    {{ with site.Params.almanac_tagline }}<span class="masthead-tagline">{{ . }}</span>{{ end }}
+    {{- with site.Params.author.avatar }}<img class="masthead-mark" src="{{ . }}" alt="" width="36" height="36">{{ end }}
+    <span class="masthead-words">
+      <span class="masthead-name">{{ site.Title }}</span>
+      {{ with site.Params.almanac_tagline }}<span class="masthead-tagline">{{ . }}</span>{{ end }}
+    </span>
   </a>
-  {{ with site.Menus.main }}
   <nav class="masthead-nav" aria-label="Main">
-    {{ range . }}
-      {{ $url := .URL | relLangURL }}
-      {{ with .Page }}{{ with .Params.redirect_url }}{{ $url = . }}{{ end }}{{ end }}
-      <a href="{{ $url | safeURL }}">{{ .Name }}</a>
-    {{ end }}
+    {{- range site.Menus.main }}
+      {{- $url := .URL | relLangURL }}
+      {{- with .Page }}{{ with .Params.redirect_url }}{{ $url = . }}{{ end }}{{ end }}
+      <a href="{{ $url | safeURL }}"{{ if eq (strings.TrimSuffix "/" $url) (strings.TrimSuffix "/" $here) }} aria-current="page"{{ end }}>{{ .Name }}</a>
+    {{- end }}
+    {{- with site.Params.author.username }}
+      <a class="masthead-mb" href="https://micro.blog/{{ . }}">Also on Micro.blog</a>
+    {{- end }}
   </nav>
-  {{ end }}
 </header>

@@ -39,11 +39,40 @@
   </nav>
   {{- end }}
 {{- else }}
-  <article class="page">
-    <header class="list-head"><h1 class="page-title">{{ .Title }}</h1></header>
-    <div class="page-body">
-      {{ .Content }}
+  {{- $isAbout := or (eq (strings.TrimSuffix "/" .RelPermalink) "/about") .Params.almanac_facts }}
+  {{- $posts := (where site.RegularPages "Type" "post").ByDate }}
+  <article class="page{{ if $isAbout }} page--about{{ end }}">
+    <div class="page-split">
+      <header class="page-split-head">
+        {{- if and $isAbout $posts }}<span class="list-kicker">Since {{ (index $posts 0).Date.Format "January 2, 2006" }}</span>{{ end }}
+        <h1 class="page-title">{{ .Title }}</h1>
+      </header>
+      <div class="page-body">
+        {{ .Content }}
+      </div>
     </div>
+
+    {{- if and $isAbout $posts }}
+      {{- $first := index $posts 0 }}
+      {{- $latest := index (last 1 $posts) 0 }}
+    <section class="facts" aria-label="By the numbers">
+      <div class="fact">
+        <span class="fact-label">First snippet</span>
+        <span class="fact-value">{{ $first.Date.Year }}</span>
+        <a href="{{ $first.Permalink }}">{{ $first.Date.Format "Jan 2" }}{{ with ($first.Title | default ($first.Summary | plainify | htmlUnescape | strings.TrimSpace)) }} · {{ . | truncate 40 }}{{ end }} →</a>
+      </div>
+      <div class="fact">
+        <span class="fact-label">Snippets so far</span>
+        <span class="fact-value fact-value--accent">{{ len $posts }}</span>
+        <a href="{{ "archive/" | relURL }}">See them by month →</a>
+      </div>
+      <div class="fact">
+        <span class="fact-label">Latest</span>
+        <span class="fact-value">{{ $latest.Date.Format "Jan 2" }}</span>
+        <a href="{{ $latest.Permalink }}">{{ with ($latest.Title | default ($latest.Summary | plainify | htmlUnescape | strings.TrimSpace)) }}{{ . | truncate 40 }}{{ else }}{{ $latest.Date.Format "2006" }}{{ end }} →</a>
+      </div>
+    </section>
+    {{- end }}
   </article>
 {{- end }}
 {{ end }}

@@ -1,8 +1,25 @@
 {{ define "main" }}
   {{- $posts := (where site.RegularPages "Type" "post").ByDate.Reverse -}}
-  <header class="list-head">
-    <span class="list-kicker">{{ len $posts }} {{ cond (eq (len $posts) 1) "snippet" "snippets" }}</span>
-    <h1 class="page-title">Archive</h1>
+  {{- $years := $posts.GroupByDate "2006" -}}
+  {{- $thisMonth := now.Format "2006-01" -}}
+  {{- $firstMonth := $thisMonth -}}
+  {{- $span := "" -}}
+  {{- with $posts }}
+    {{- $oldest := index (last 1 .) 0 }}
+    {{- $firstMonth = $oldest.Date.Format "2006-01" }}
+    {{- $span = printf " · %d–%d" $oldest.Date.Year (index . 0).Date.Year }}
+  {{- end }}
+
+  <header class="list-head list-head--split">
+    <div>
+      <span class="list-kicker">{{ len $posts }} {{ cond (eq (len $posts) 1) "snippet" "snippets" }}{{ $span }}</span>
+      <h1 class="page-title">Archive</h1>
+    </div>
+    {{- if gt (len $years) 1 }}
+    <nav class="year-jump" aria-label="Jump to year">
+      {{- range $years }}<a href="#y{{ .Key }}">{{ .Key }}</a>{{ end }}
+    </nav>
+    {{- end }}
   </header>
 
   {{- with site.Taxonomies.categories }}
@@ -17,11 +34,8 @@
   {{- range $posts.GroupByDate "2006-01" -}}
     {{- $byMonth = merge $byMonth (dict .Key .Pages) -}}
   {{- end -}}
-  {{- $thisMonth := now.Format "2006-01" -}}
-  {{- $firstMonth := $thisMonth -}}
-  {{- with $posts }}{{ $firstMonth = (index (last 1 .) 0).Date.Format "2006-01" }}{{ end -}}
 
-  {{- range $posts.GroupByDate "2006" }}
+  {{- range $years }}
     {{- $y := .Key }}
   <section class="arch-year" id="y{{ $y }}" aria-labelledby="yh{{ $y }}">
     <div class="arch-year-head">
@@ -37,15 +51,16 @@
       <li class="arch-month{{ if not $ps }} is-empty{{ end }}" id="m-{{ $key }}">
         <h3>{{ $label }}{{ with $ps }} <span>{{ len . }}</span>{{ end }}</h3>
         {{- with $ps }}
-        <div class="arch-days">
+        <div class="arch-posts">
           {{- range .Reverse }}
             {{- $img := "" }}
             {{- with .Params.photos }}{{ $img = index . 0 }}{{ end }}
             {{- if not $img }}{{ with findRE `<img[^>]+src="[^"]+"` .Content 1 }}{{ $img = replaceRE `^.*src="([^"]+)".*$` "$1" (index . 0) }}{{ end }}{{ end }}
-            {{- $sum := .Summary | plainify | htmlUnescape | truncate 80 }}
-          <a class="day-chip{{ if $img }} has-photo{{ end }}" href="{{ .Permalink }}" title="{{ .Date.Format "Jan 2" }}{{ with $sum }} — {{ . }}{{ end }}">
-            {{- with $img }}<img src="{{ . }}" alt="" loading="lazy">{{ end -}}
-            <span>{{ .Date.Day }}</span>
+            {{- $sum := .Title | default (.Summary | plainify | htmlUnescape | strings.TrimSpace) | truncate 110 }}
+          <a class="arch-post" href="{{ .Permalink }}">
+            <time datetime="{{ .Date.Format "2006-01-02" }}">{{ .Date.Day }}</time>
+            <span class="arch-thumb" aria-hidden="true">{{ with $img }}<img src="{{ . }}" alt="" loading="lazy">{{ end }}</span>
+            <span class="arch-text">{{ with $sum }}{{ . }}{{ else }}{{ if $img }}Photo{{ else }}Snippet{{ end }}{{ end }}</span>
           </a>
           {{- end }}
         </div>
