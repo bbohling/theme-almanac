@@ -1,7 +1,11 @@
+{{- $name := site.Params.author.name | default "" -}}
+{{- if hasPrefix $name "[" }}{{ $name = "" }}{{ end -}}
+{{- $user := site.Params.author.username | default "" -}}
+{{- if hasPrefix $user "[" }}{{ $user = "" }}{{ end -}}
 <footer class="colophon">
-  <span>© {{ now.Year }} {{ site.Params.author.name | default site.Title }}</span>
+  <span>© {{ now.Year }} {{ $name | default site.Title }}</span>
   <span class="colophon-links">
-    {{ with site.Params.author.username }}<a href="https://micro.blog/{{ . }}">Also on Micro.blog</a> · {{ end }}
+    {{ with $user }}<a href="https://micro.blog/{{ . }}">Also on Micro.blog</a> · {{ end }}
     <a href="{{ "feed.xml" | absURL }}">RSS</a> ·
     <a href="{{ "feed.json" | absURL }}">JSON Feed</a>
   </span>

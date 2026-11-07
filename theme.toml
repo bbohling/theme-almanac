@@ -1,0 +1,11 @@
+# Theme metadata (Hugo reads this for theme listings only; settings live in config.json)
+name = "Almanac"
+description = "A Swiss-style, photo-first micro.blog theme where every snippet is led by its date. Month-by-month post strip, calendar archive, About page facts, dark mode."
+homepage = "https://github.com/bbohling/theme-almanac"
+tags = ["micro.blog", "photography", "minimal", "blog", "dark mode"]
+features = ["month strip", "calendar archive", "photo grid", "dark mode"]
+min_version = "0.128.0"
+
+[author]
+  name = "Brandon Bohling"
+  homepage = "https://micro.brandonbohling.com"

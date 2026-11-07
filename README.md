@@ -22,7 +22,7 @@ To change a template later, edit it in micro.blog's theme editor or push to the 
 
 ## Settings
 
-Edit the `params` block at the bottom of `config.json`:
+`config.json` holds only this theme's defaults. It has no personal or site settings: micro.blog supplies your title, URL, author, feeds and menus from your account, so the same repo works for anyone.
 
 | Param | Default | What it does |
 |---|---|---|
@@ -33,12 +33,16 @@ Edit the `params` block at the bottom of `config.json`:
 | `almanac_home_count` | `30` | Posts on the home page when micro.blog's home pagination is off |
 | `almanac_show_time` | `false` | Adds the time of day next to each date in the feed |
 
+To change these for your own blog, edit `config.json` in micro.blog's theme editor (or fork the repo). Don't paste a whole site config in: values like `[USERNAME]` are only filled in by micro.blog when they come from its own config, not from a theme's.
+
 The theme also respects micro.blog's own `paginate_home` and `include_conversation` settings.
 
 You can override any style from **Design → Edit CSS**: `custom.css` loads after `almanac.css`. All the colors are CSS variables on `:root` (`--bg`, `--ink`, `--muted`, `--panel`, `--accent`).
+
+`theme.toml` is Hugo's theme metadata (name, description, author). Hugo doesn't read settings from it.
 
 ## Notes
 
 - Fonts: Archivo (variable width) from Google Fonts. The big numerals use its condensed width axis.
 - Your nav comes from your micro.blog pages and menu, as before. Pages with a redirect URL are respected.
-- `plugin.json` is included so the same repo can later be published as a micro.blog plug-in with a settings screen. For a plug-in, trim `config.json` down to just the `params` block.
+- `plugin.json` is included so the same repo can also be installed as a micro.blog plug-in, with a settings screen for the params above.
