@@ -13,7 +13,7 @@
   {{- else }}
     {{- $pages := (where .RegularPagesRecursive "Type" "in" (slice "post" "reply")).ByDate.Reverse -}}
     {{- $pag := .Paginate $pages -}}
-    {{ partial "almanac/feed.html" $pag.Pages }}
-    {{ partial "almanac/pager.html" (dict "pag" $pag) }}
+    {{ partial "almanac-feed.html" $pag.Pages }}
+    {{ partial "almanac-pager.html" (dict "pag" $pag) }}
   {{- end }}
 {{ end }}

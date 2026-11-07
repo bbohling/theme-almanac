@@ -1,7 +1,7 @@
 {{- $here := .RelPermalink -}}
-{{- $avatar := site.Params.author.avatar | default "" -}}
+{{- $avatar := index (site.Params.author | default dict) "avatar" | default "" -}}
 {{- if hasPrefix $avatar "[" }}{{ $avatar = "" }}{{ end -}}
-{{- $user := site.Params.author.username | default "" -}}
+{{- $user := index (site.Params.author | default dict) "username" | default "" -}}
 {{- if hasPrefix $user "[" }}{{ $user = "" }}{{ end -}}
 <header class="masthead">
   <a class="masthead-title" href="{{ "/" | relURL }}">

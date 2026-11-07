@@ -1,6 +1,6 @@
-{{- $name := site.Params.author.name | default "" -}}
+{{- $name := index (site.Params.author | default dict) "name" | default "" -}}
 {{- if hasPrefix $name "[" }}{{ $name = "" }}{{ end -}}
-{{- $user := site.Params.author.username | default "" -}}
+{{- $user := index (site.Params.author | default dict) "username" | default "" -}}
 {{- if hasPrefix $user "[" }}{{ $user = "" }}{{ end -}}
 <footer class="colophon">
   <span>© {{ now.Year }} {{ $name | default site.Title }}</span>

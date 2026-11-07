@@ -6,6 +6,6 @@
     <h2 class="year-mark" id="y{{ .Date.Year }}">{{ .Date.Year }}</h2>
       {{- $lastYear = .Date.Year }}
     {{- end }}
-    {{ partial "almanac/entry.html" . }}
+    {{ partial "almanac-entry.html" . }}
   {{- end }}
 </div>
