@@ -22,7 +22,7 @@ To change a template later, edit it in micro.blog's theme editor or push to the 
 
 ## Settings
 
-`config.json` holds only this theme's defaults. It has no personal or site settings: micro.blog supplies your title, URL, author, feeds and menus from your account, so the same repo works for anyone.
+`config.json` holds no personal or site settings. It carries micro.blog's standard output setup (feeds, `/archive/`, `/photos/`, podcast feeds, categories), which a custom theme has to supply itself, plus this theme's defaults. Micro.blog fills in your title, URL, author and menus from your account, so the same repo works for anyone.
 
 | Param | Default | What it does |
 |---|---|---|

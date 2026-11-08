@@ -1,0 +1,16 @@
+  {{- $list := (where site.RegularPages ".Params.photos" "!=" nil).ByDate.Reverse -}}
+  <header class="list-head">
+    <span class="list-kicker">{{ len $list }} with photos</span>
+    <h1 class="page-title">Photos</h1>
+  </header>
+  <div class="photo-grid">
+    {{- range $list }}
+      {{- $p := . }}
+      {{- with .Params.photos }}
+    <a class="photo-tile" href="{{ $p.Permalink }}">
+      <img src="{{ index . 0 }}" alt="" loading="lazy">
+      <span class="photo-date"><b>{{ $p.Date.Day }}</b> {{ $p.Date.Format "Jan 2006" }}</span>
+    </a>
+      {{- end }}
+    {{- end }}
+  </div>
