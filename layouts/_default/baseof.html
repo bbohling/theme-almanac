@@ -1,14 +1,42 @@
 <!DOCTYPE html>
 <html lang="{{ site.LanguageCode | default "en" }}">
-  {{ partial "almanac-head.html" . }}
+  {{- /* Each piece is wrapped in try so one failing piece can't take the whole site down;
+         errors are shown in a red box at the top of the page instead. */ -}}
+  {{- $errors := slice -}}
+  {{- $head := try (partial "almanac-head.html" .) -}}
+  {{- with $head.Err }}{{ $errors = $errors | append (printf "almanac-head.html: %s" .) }}{{ end -}}
+  {{- $mbhead := dict "Value" "" "Err" nil -}}
+  {{- if templates.Exists "partials/microblog_head.html" }}{{ $mbhead = try (partial "microblog_head.html" .) }}{{ end -}}
+  {{- with $mbhead.Err }}{{ $errors = $errors | append (printf "microblog_head.html (micro.blog / plug-ins): %s" .) }}{{ end -}}
+  {{- $header := try (partial "almanac-header.html" .) -}}
+  {{- with $header.Err }}{{ $errors = $errors | append (printf "almanac-header.html: %s" .) }}{{ end -}}
+  {{- $footer := try (partial "almanac-footer.html" .) -}}
+  {{- with $footer.Err }}{{ $errors = $errors | append (printf "almanac-footer.html: %s" .) }}{{ end }}
+  <head>
+    {{- if $head.Err }}
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{ site.Title }}</title>
+    <link rel="stylesheet" href="{{ "almanac.css" | relURL }}">
+    {{- else }}
+    {{ $head.Value }}
+    {{- end }}
+    {{ $mbhead.Value }}
+  </head>
   <body class="almanac kind-{{ .Kind }}">
+    {{- with $errors }}
+    <div role="alert" style="margin:0;padding:16px 20px;background:#D7261E;color:#fff;font:14px/1.45 ui-monospace,Menlo,monospace;white-space:pre-wrap;word-break:break-word">
+      <strong>Almanac theme error</strong>{{ range . }}
+{{ . }}{{ end }}
+    </div>
+    {{- end }}
     <a class="skip-link" href="#main">Skip to content</a>
     <div class="wrap">
-      {{ partial "almanac-header.html" . }}
+      {{ $header.Value }}
       <main id="main">
         {{ block "main" . }}{{ end }}
       </main>
-      {{ partial "almanac-footer.html" . }}
+      {{ $footer.Value }}
     </div>
     {{ if templates.Exists "partials/custom_footer.html" }}{{ partial "custom_footer.html" . }}{{ end }}
     {{ range site.Params.plugins_js }}
