@@ -1,0 +1,40 @@
+{{- /* Used only when micro.blog's microblog_head.html fails, almost always because an
+       installed plug-in's head partial no longer works with this Hugo version.
+       Same tags as micro.blog's Blank theme, but each plug-in partial is run
+       separately so one broken plug-in is skipped instead of breaking the page. */ -}}
+{{- $author := site.Params.author | default dict -}}
+{{- $user := index $author "username" | default "" -}}
+{{- if hasPrefix $user "[" }}{{ $user = "" }}{{ end -}}
+{{ if ne .Kind "home" }}
+  <link rel="alternate" href="{{ "feed.xml" | absURL }}" type="application/rss+xml" title="{{ site.Title }}">
+  <link rel="alternate" href="{{ "feed.json" | absURL }}" type="application/json" title="{{ site.Title }}">
+{{ end }}
+{{ range .AlternativeOutputFormats -}}
+  {{ printf `<link rel="%s" href="%s" type="%s" title="%s">` .Rel .Permalink .MediaType.Type site.Title | safeHTML }}
+{{ end -}}
+{{ if site.Params.has_podcasts }}
+  <link rel="alternate" href="{{ "podcast.xml" | absURL }}" type="application/rss+xml" title="Podcast">
+  <link rel="alternate" href="{{ "podcast.json" | absURL }}" type="application/json" title="Podcast">
+{{ end }}
+{{ with $user }}
+  <link rel="me" href="https://micro.blog/{{ . }}">
+  <link rel="shortcut icon" href="https://micro.blog/{{ . }}/favicon.png" type="image/x-icon">
+{{ end }}
+{{ with site.Params.github_username }}{{ if not (hasPrefix . "[") }}<link rel="me" href="https://github.com/{{ . }}">{{ end }}{{ end }}
+{{ with site.Params.instagram_username }}{{ if not (hasPrefix . "[") }}<link rel="me" href="https://instagram.com/{{ . }}">{{ end }}{{ end }}
+<link rel="EditURI" type="application/rsd+xml" href="{{ "rsd.xml" | absURL }}">
+<link rel="authorization_endpoint" href="https://micro.blog/indieauth/auth">
+<link rel="token_endpoint" href="https://micro.blog/indieauth/token">
+<link rel="subscribe" href="https://micro.blog/users/follow">
+<link rel="webmention" href="https://micro.blog/webmention">
+<link rel="micropub" href="https://micro.blog/micropub">
+<link rel="microsub" href="https://micro.blog/microsub">
+<link rel="stylesheet" href="{{ "custom.css" | relURL }}?{{ site.Params.theme_seconds }}">
+{{ range site.Params.plugins_css }}
+  <link rel="stylesheet" href="{{ . }}">
+{{ end }}
+{{ range $filename := site.Params.plugins_html }}
+  {{- $r := try (partial $filename $) }}
+  {{- with $r.Err }}<meta name="almanac-skipped-plugin" content="{{ $filename }}: {{ . }}">
+  {{- else }}{{ $r.Value }}{{ end }}
+{{ end }}

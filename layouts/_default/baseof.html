@@ -7,7 +7,9 @@
   {{- with $head.Err }}{{ $errors = $errors | append (printf "almanac-head.html: %s" .) }}{{ end -}}
   {{- $mbhead := dict "Value" "" "Err" nil -}}
   {{- if templates.Exists "partials/microblog_head.html" }}{{ $mbhead = try (partial "microblog_head.html" .) }}{{ end -}}
-  {{- with $mbhead.Err }}{{ $errors = $errors | append (printf "microblog_head.html (micro.blog / plug-ins): %s" .) }}{{ end -}}
+  {{- /* micro.blog's head failed (usually an outdated plug-in): use the theme's copy, which skips broken plug-ins */ -}}
+  {{- if $mbhead.Err }}{{ $mbhead = try (partial "almanac-mbhead-fallback.html" .) }}{{ end -}}
+  {{- with $mbhead.Err }}{{ $errors = $errors | append (printf "micro.blog head: %s" .) }}{{ end -}}
   {{- $header := try (partial "almanac-header.html" .) -}}
   {{- with $header.Err }}{{ $errors = $errors | append (printf "almanac-header.html: %s" .) }}{{ end -}}
   {{- $footer := try (partial "almanac-footer.html" .) -}}
